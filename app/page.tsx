@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Home, Database, Globe, ShieldCheck, ArrowRight, Lock } from "lucide-react";
+import { Home, Database, Globe, ShieldCheck, ArrowRight } from "lucide-react";
 import { useTheme, palette, ThemeToggle } from "../components/theme";
 
 const URLS = {
@@ -11,11 +11,21 @@ const URLS = {
   admin: process.env.NEXT_PUBLIC_ADMIN_URL ?? "http://localhost:8080",
   site1Access: process.env.NEXT_PUBLIC_SITE1_ACCESS_URL ?? "site1.idk.com",
   site2Access: process.env.NEXT_PUBLIC_SITE2_ACCESS_URL ?? "site2.idk.com",
+  // Admin gateway entry — clicking Admin Console opens Site 1 through this route
+  adminGateway: process.env.NEXT_PUBLIC_ADMIN_GATEWAY ?? "http://192.168.99.167:8080",
 };
 
 const mono: React.CSSProperties = {
   fontFamily: "'JetBrains Mono', 'SFMono-Regular', Menlo, Consolas, monospace",
 };
+
+function hostOfUrl(url: string) {
+  try {
+    return new URL(url).host;
+  } catch {
+    return url;
+  }
+}
 
 function DestCard({
   href,
@@ -228,17 +238,13 @@ export default function Page() {
             foot={URLS.site2Access}
           />
           <DestCard
-            href={URLS.admin}
+            href={`${URLS.site1}/?via=${encodeURIComponent(URLS.adminGateway)}`}
             index={3}
             icon={<ShieldCheck size={16} />}
             tag=":8080"
             title="Admin Console"
-            desc="Management system console & direct port 8080 configuration."
-            foot={
-              <>
-                <Lock size={11} /> Port 8080
-              </>
-            }
+            desc={`Enter Site 1 through the admin gateway route.`}
+            foot={hostOfUrl(URLS.adminGateway)}
             highlight
             footAccent
           />
